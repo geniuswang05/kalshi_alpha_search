@@ -1,0 +1,12 @@
+# 抓取的数据与中间结果（全部可用 scripts/ 重新生成，约 400MB）
+data_cache/*
+!data_cache/series_fees.json
+
+__pycache__/
+*.pyc
+.DS_Store
+STOP
+
+# 永远不要提交 API 密钥
+*.pem
+.env

@@ -1,0 +1,390 @@
+<title>Kalshi Edge Atlas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (~42rem) with figures widening to ~62rem; section numbers in mono as a running index. */
+:root {
+  --bg: #f4f6f8; --surface: #ffffff; --ink: #141a22; --muted: #5a6474; --faint: #8a93a2;
+  --line: #dde2e8; --grid: #e9edf1;
+  --s1: #2a78d6; --s2: #eb6834;
+  --good: #17784a; --good-bg: #e3f3ea; --bad: #b93636; --bad-bg: #f8e5e4; --hl: #fff4d6;
+  --f-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --f-body: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0e1116; --surface: #161b22; --ink: #e7ebf0; --muted: #9ba5b4; --faint: #6f7886;
+  --line: #2a313b; --grid: #222932; --s1: #3987e5; --s2: #d95926;
+  --good: #4cc38a; --good-bg: #133524; --bad: #ec7b7b; --bad-bg: #3a1a1a; --hl: #3a3218;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0e1116; --surface: #161b22; --ink: #e7ebf0; --muted: #9ba5b4; --faint: #6f7886;
+  --line: #2a313b; --grid: #222932; --s1: #3987e5; --s2: #d95926;
+  --good: #4cc38a; --good-bg: #133524; --bad: #ec7b7b; --bad-bg: #3a1a1a; --hl: #3a3218;
+  color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16.5px; line-height: 1.65;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 64px; }
+.wrap { max-width: 62rem; margin: 0 auto; }
+.col { max-width: 42rem; }
+header { padding-block: 56px 28px; display: grid; gap: 14px; }
+.eyebrow { font-family: var(--f-mono); font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { font-family: var(--f-display); font-weight: 800; font-size: clamp(2.4rem, 6.5vw, 3.9rem); line-height: 1.05; margin: 0; letter-spacing: -.01em; text-wrap: balance; }
+.lede { font-size: 1.15rem; color: var(--muted); margin: 0; max-width: 40rem; }
+h2 { font-family: var(--f-display); font-weight: 600; font-size: 1.75rem; line-height: 1.25; margin: 0 0 6px; text-wrap: balance; }
+h3 { font-size: 1rem; font-weight: 600; margin: 0; }
+p { margin: 0; }
+section { padding-block: 40px; border-top: 1px solid var(--line); display: grid; gap: 16px; }
+.sec-num { font-family: var(--f-mono); color: var(--faint); font-size: 13px; }
+.num, td.n, .mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.num { font-size: .94em; }
+mark { background: var(--hl); color: inherit; padding: 0 .15em; border-radius: 2px; }
+a { color: var(--s1); }
+code { font-family: var(--f-mono); font-size: .86em; background: var(--grid); padding: .05em .35em; border-radius: 4px; overflow-wrap: anywhere; }
+.stack { display: grid; gap: 12px; }
+.tldr { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px; display: grid; gap: 10px; }
+.tldr h3 { font-family: var(--f-mono); font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 660px; font-size: 14.5px; }
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 500; color: var(--muted); font-size: 12.5px; letter-spacing: .04em; text-transform: uppercase; }
+tr:last-child td { border-bottom: 0; }
+td.n, th.n { text-align: right; white-space: nowrap; }
+.pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 500; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+.pill.no { color: var(--bad); background: var(--bad-bg); }
+.pill.yes { color: var(--good); background: var(--good-bg); }
+.pill svg { width: 12px; height: 12px; }
+.figure { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 18px 12px; display: grid; gap: 10px; position: relative; }
+.figure .cap { font-size: 13.5px; color: var(--muted); }
+.figure h3 { font-size: 15px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+svg.chart { width: 100%; height: auto; display: block; overflow: visible; }
+svg.chart text { fill: var(--muted); font-family: var(--f-mono); font-size: 11px; }
+svg.chart .lbl { fill: var(--ink); font-family: var(--f-body); font-size: 12.5px; }
+svg.chart .grid { stroke: var(--grid); stroke-width: 1; }
+svg.chart .axis { stroke: var(--line); stroke-width: 1; }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 12.5px; line-height: 1.5;
+  padding: 7px 10px; border-radius: 6px; white-space: nowrap; transform: translate(-50%, calc(-100% - 10px)); }
+.tip[hidden] { display: none !important; }
+.steps { display: grid; gap: 12px; counter-reset: s; padding: 0; margin: 0; list-style: none; }
+.steps li { display: grid; grid-template-columns: 2rem 1fr; gap: 10px; }
+.steps li::before { counter-increment: s; content: counter(s); font-family: var(--f-mono); font-size: 13px; color: var(--muted);
+  width: 1.7rem; height: 1.7rem; border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; margin-top: 2px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.formula { font-family: var(--f-mono); font-size: 13.5px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; overflow-x: auto; white-space: pre; line-height: 1.7; }
+.note { font-size: 14.5px; color: var(--muted); }
+ul.plain { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; }
+footer { padding-block: 32px 0; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); display: grid; gap: 8px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Prediction-market microstructure · Research report · October 2026</div>
+  <h1>Kalshi Edge Atlas</h1>
+  <p class="lede">Where can a retail quant still make money on an exchange priced by professional capital? We tested seven hypotheses against 6.5 million real Kalshi trades, end-game candles from 9,452 markets, and 2,351 baseball games aligned minute by minute with Polymarket.</p>
+</header>
+
+<div class="col tldr">
+  <h3>Summary</h3>
+  <p>Six hypotheses that depend on knowing more than the market, or on the market mispricing something, failed. A machine-learning model lost to the closing price. Market making in the major leagues earns less spread than it pays in fees. A longshot bias that looked like p &lt; 0.0001 disappeared under a larger, cleaner test. Polymarket follows Kalshi, not the other way around.</p>
+  <p>The one source of positive expectancy that held up is <mark>the exchange's own liquidity subsidy</mark>, the Liquidity Incentive Program. It pays for resting orders whether or not they trade. We implemented the official scoring rules, built a quoting bot, and ran four 8-hour shadow tests against live order books. All four finished net positive, but once inventory losses are counted the diversified runs earned well under 1% of capital per day, and reward share is an upper bound.</p>
+</div>
+
+<section>
+  <div class="sec-num">01 · Scorecard</div>
+  <h2>Seven hypotheses, one survivor</h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Hypothesis</th><th>Evidence</th><th>Key number</th><th>Verdict</th></tr></thead>
+      <tbody id="score"></tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-num">02 · Data and method</div>
+  <h2>How the tests were built</h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Dataset</th><th>Source</th><th class="n">Scale</th></tr></thead>
+      <tbody>
+        <tr><td>NBA box scores and player game logs</td><td>stats.nba.com</td><td class="n">7 seasons · 8,279 games</td></tr>
+        <tr><td>NBA game contracts and hourly candles</td><td>Kalshi <code>/historical/markets</code>, candlesticks</td><td class="n">2,898 contracts · 176,670 candles</td></tr>
+        <tr><td>Stratified trade sample, 27 sports series</td><td>Kalshi <code>/historical/trades</code> (taker side labeled)</td><td class="n">1,080 markets · 6.5M trades</td></tr>
+        <tr><td>End-game 1-minute candles</td><td>Kalshi candlesticks, 17 leagues</td><td class="n">9,452 markets</td></tr>
+        <tr><td>Cross-venue minute prices</td><td>Kalshi + Polymarket CLOB price history</td><td class="n">2,351 MLB games · 650k minutes</td></tr>
+        <tr><td>Liquidity incentive programs and live books</td><td>Kalshi <code>/incentive_programs</code>, order books</td><td class="n">6,657 active programs · 1,315 books</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <ul class="plain col">
+    <li><b>Real costs.</b> Every return is net of Kalshi's fee schedule: taker fee 0.07 × multiplier × P(1−P) per contract, maker fee at 25% of that on series that charge it. Buys execute at the ask and sells at the bid.</li>
+    <li><b>Out of sample.</b> Parameters, league selection and time anchors are fit on the first half of the data (by settlement date) and evaluated on the second half.</li>
+    <li><b>Clustered inference.</b> Every trade in a market shares one settlement outcome, so t-statistics are computed across markets, not trades. Calibration claims use exact binomial tests.</li>
+    <li><b>No look-ahead.</b> End-game windows are anchored to <code>expected_expiration_time</code>, which Kalshi publishes when the market opens, plus a league offset estimated on the first half only. Settlement time is never used to select trades.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="sec-num">03 · Information edge</div>
+  <h2>The closing price knows the game better than the model</h2>
+  <div class="col stack">
+    <p>The starting point was an XGBoost win-probability model for the NBA: 538-style Elo, rolling offensive and defensive ratings over 5, 10 and 20 games, rest and back-to-back flags, and later a player-availability feature that prices each missing rotation player by recent Game Score. The model was trained on 2019–24, calibrated with isotonic regression on 2024–25, and scored out of sample on 1,068 games of the 2025–26 season against the real Kalshi price four hours before tip-off.</p>
+    <p>The market's log loss was <span class="num">0.5685</span> against the model's <span class="num">0.6099</span>. Adding injury information brought the model to <span class="num">0.5940</span>, and that version was allowed to see who actually sat out that night. In a logistic regression on both forecasts, the model's coefficient was <span class="num">0.004</span>: everything it knew was already in the price. A sweep of 107 combinations of timing, edge threshold and price band found no cell with t &gt; 1.65, where chance alone would produce about five.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-num">04 · Market making</div>
+  <h2>The spread exists, but fees and adverse selection consume it</h2>
+  <div class="col stack">
+    <p>Each trade has a passive counterparty. Treating that maker as a market maker, we measured the realized spread: the profit on the fill marked against the volume-weighted price of trades 10 seconds later. In the major leagues, a 1¢ quoted spread leaves the maker with a few hundredths of a cent, while Kalshi charges those series a maker fee several times larger.</p>
+    <p>Two-leg arbitrage between the two teams' contracts in the same NBA game fared no better: of 82,337 pre-game hourly snapshots, 62 were profitable after both legs' fees, and those are most likely candles that closed a few seconds apart.</p>
+  </div>
+  <div class="figure">
+    <h3>Per contract: maker realized spread vs maker fee (cents)</h3>
+    <div class="legend"><span><i style="background:var(--s1)"></i>10-second realized spread</span><span><i style="background:var(--s2)"></i>Maker fee</span></div>
+    <svg class="chart" id="c-mm" role="img" aria-label="Realized spread vs maker fee"></svg>
+    <div class="cap">Stratified sample of 27 sports series and 1,080 markets. "Major leagues" are the series that charge maker fees; long-tail series (esports, cricket, Asian baseball, darts) do not.</div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-num">05 · Methodology</div>
+  <h2>A false discovery at p &lt; 0.0001</h2>
+  <div class="col stack">
+    <p>The most attractive signal appeared in the final minutes of games. Longshots priced 2–10¢ reversed in only 11 of 572 markets in the trade sample, where their prices implied 31.5. Selling those longshots passively earned 3.6¢ per contract out of sample, with t = 5.4. We did not trade on it. Three checks followed.</p>
+    <ol class="steps">
+      <li><p><b>A sampling bias.</b> Each time window kept only its most recent 1,000 trades. A miracle comeback triggers a burst of volume that pushes the longshot trades before it out of the sample, so the sample under-counts longshots that went on to win. We re-fetched all 1,242 truncated windows in full. The signal survived.</p></li>
+      <li><p><b>Sampling that ignores volume.</b> We took a snapshot every five minutes of wall-clock time inside the ex-ante end-game window and expanded to 9,452 markets. Longshots on both sides were priced correctly.</p></li>
+      <li><p><b>The source of the anomaly.</b> Running the snapshot test on the same markets as the trade sample reproduced the low reversal rate. The anomaly belongs to those particular markets' outcomes, not to a mispricing at the moments retail traders buy. After this many cuts of the data, an outlier of that size is what chance produces.</p></li>
+    </ol>
+  </div>
+  <div class="figure">
+    <h3>End-game longshots: implied vs realized reversal rate, with 95% intervals</h3>
+    <div class="legend"><span><i style="background:var(--s1)"></i>Implied by price</span><span><i style="background:var(--s2)"></i>Realized</span></div>
+    <svg class="chart" id="c-rev" role="img" aria-label="Reversal-rate test"></svg>
+    <div class="cap">A longshot is the side priced 2–10¢ inside the end-game window. The trailing side is a team's YES contract at 2–10¢; the leading side is a team's NO at 2–10¢, which means its YES trades at 90–98¢.</div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-num">06 · Cross-venue</div>
+  <h2>During games, Polymarket follows Kalshi</h2>
+  <p class="col">We aligned Kalshi and Polymarket prices minute by minute for 2,351 MLB games and regressed each venue's next move on the gap between them. In play, Polymarket closes 92% of the gap within one minute while Kalshi barely moves toward Polymarket. Using Polymarket as a signal to trade Kalshi produced no configuration with in-sample t &gt; 1, and every candidate lost money out of sample. Kalshi is where in-game price discovery happens.</p>
+  <div class="figure">
+    <h3>Share of the price gap closed, β, in-game, by horizon</h3>
+    <div class="legend"><span><i style="background:var(--s1)"></i>Polymarket moves toward Kalshi</span><span><i style="background:var(--s2)"></i>Kalshi moves toward Polymarket</span></div>
+    <svg class="chart" id="c-ll" role="img" aria-label="Lead-lag coefficients"></svg>
+    <div class="cap">β = 1 means the gap is fully closed within the horizon. Per-game regressions averaged across games; at one minute t = 213. Polymarket's history records a single price per minute, so part of its lag may be measurement.</div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-num">07 · The survivor</div>
+  <h2>The exchange pays for liquidity, and that payment needs no forecast</h2>
+  <div class="col stack">
+    <p>Kalshi's Liquidity Incentive Program photographs each eligible order book once per second. On each side, it walks down from the best bid and admits whole price levels until resting size reaches the market's Target Size. Orders at or above the reference price score their full size; each tick below it multiplies the score by the Discount Factor. A participant's reward is their share of all qualifying score, averaged over the period, times the period's prize.</p>
+  </div>
+  <div class="formula">score(order)   = size × DF^(ticks below reference price)
+share(user)    = ½ · Σ score(yes bids)/Σ score(all yes) + ½ · Σ score(no bids)/Σ score(all no)
+payout(user)   = time-averaged share × period reward × (qualifying snapshots ÷ all snapshots)
+Typical terms  : Target Size 1,000 contracts · DF 0.5 · reward $10–$1,000 per market per day</div>
+  <div class="col stack">
+    <p>Programs running from August to December 2026 total about <span class="num">$13.4M</span>. When we scanned, <span class="num">6,657</span> programs were live with <span class="num">$775k</span> in prizes, mostly outside sports: state gas prices, weather, streaming and box-office counts, political mentions. About half of these markets are already crowded, with a 1¢ spread and a median depth of 13,634 contracts per side. The other half have spreads of 2¢ or more, where a Target-Size order placed inside the spread takes most of the score, at the cost of becoming the quote that gets hit first.</p>
+    <p>Our first scoring implementation cut off orders at the back of the queue within a price level. The program terms admit the whole level, and correcting that raised the median share for joining the best price in a 1¢ market from zero to 58%.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-num">08 · Forward test</div>
+  <h2>Four 8-hour shadow runs on live order books</h2>
+  <p class="col">Every 30 seconds the bot read the real book and real trades for 30 markets. It scored its hypothetical quotes with the program rules and accrued reward over time. Any real taker trade at or through a hypothetical quote counted as a fill at our price, and inventory was marked to the mid. No order was ever sent.</p>
+  <div class="figure">
+    <h3>Cumulative net P&amp;L: reward plus inventory marked to mid</h3>
+    <div class="note" id="sh-status"></div>
+    <div class="legend" id="sh-legend"></div>
+    <svg class="chart" id="c-sh" role="img" aria-label="Shadow market-making cumulative net P&amp;L"></svg>
+    <div class="cap">v1 selects by reward per dollar of capital. v2 adds diversification by Kalshi category (at most 6 per category, 2 per series), a per-market stop that pulls quotes once inventory losses exceed max($10, 2× reward earned), and excludes markets settling within six hours of the test's end.</div>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Run</th><th class="n">Markets</th><th class="n">Reward (upper bound)</th><th class="n">Inventory</th><th class="n">Net</th><th class="n">Fills</th><th class="n">30-min markout</th><th class="n">Capital</th></tr></thead>
+      <tbody id="sh-table"></tbody>
+    </table>
+  </div>
+  <div class="col stack">
+    <p><b>How to read this.</b> The v1 runs look strongest, but their 30 markets were almost all daily AAA gas-price contracts. Kalshi lists each state as its own series, so the per-series cap did not diversify anything. Their positive markout means the inventory happened to move our way: that is an unhedged bet on gasoline prices, not a property of the strategy. In the v1 join-best run, a single Missouri market lost $153 in its first two hours.</p>
+    <p>The diversified v2 runs are the better guide. Fills there lost about $100–$200 within 30 minutes of execution, which is adverse selection: people who trade with a resting quote often know something. That cost consumed most of the reward and left about $60–$75 of net profit per run, roughly 0.2% of capital over eight hours. The edge is real but thin, and it depends on a reward share that real competitors would contest.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-num">09 · Strategy specification</div>
+  <h2>Subsidy Harvester</h2>
+  <div class="grid2">
+    <div class="card"><h3>Market selection</h3><p class="note">Live incentive markets with spread ≤ 20¢, where trades in the last 24 hours that would have hit our quote total less than 25% of our size, and whose program outlasts the holding period. Rank by reward per dollar of capital and diversify by category and by underlying.</p></div>
+    <div class="card"><h3>Quoting</h3><p class="note">Rest Target Size on both sides. With a spread of 3¢ or more, improve each side by one tick to lead the queue; otherwise join the best price. A filled YES and a filled NO together lock in $1 and are netted immediately.</p></div>
+    <div class="card"><h3>Risk</h3><p class="note">Net inventory per side capped at Target Size. Per-market stop on inventory loss. Pull quotes ahead of settlement and known data releases. Skip near-empty books where resting at extreme prices could be judged contrary to the program's purpose.</p></div>
+    <div class="card"><h3>Execution</h3><p class="note">Orders go through <code>POST /portfolio/events/orders</code> with client order IDs for idempotency. Run the bot against Kalshi's demo environment before committing any capital.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-num">10 · Limitations</div>
+  <h2>What this report does not show</h2>
+  <ul class="plain col">
+    <li><b>Reward share is an upper bound.</b> Shadow quotes are invisible to other participants. Real quotes would draw competitors who add size, and the equilibrium share can only be measured with real orders.</li>
+    <li><b>Eight hours is a short sample.</b> The tests saw few scheduled information events. Tail losses around data releases, such as the morning AAA update, need a longer window.</li>
+    <li><b>Marks are noisy.</b> In thin books the mid can jump by several cents when a single order appears or disappears, so the inventory marks are noisy until the markets settle.</li>
+    <li><b>The program can change.</b> Kalshi sets the terms unilaterally, can modify or end programs at any time, pays after each period, and does not pay amounts under $1.</li>
+    <li>Nothing here involved a live trade, and nothing here is investment advice.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="sec-num">11 · Next steps</div>
+  <h2>What would settle the question</h2>
+  <ol class="steps col">
+    <li><p>Re-mark the shadow inventories at settlement prices once the markets resolve, replacing the mid-price marks.</p></li>
+    <li><p>Run the v2 bot in Kalshi's demo environment to validate order handling, then with small real size to measure the reward share that survives competition.</p></li>
+    <li><p>Add event-aware quoting: pull quotes before each market's known information releases, and hedge correlated inventory across related markets such as neighboring gas-price strikes.</p></li>
+    <li><p>Reverse the cross-venue finding: test whether Kalshi's lead predicts Polymarket's price, using Polymarket trade data for execution.</p></li>
+  </ol>
+</section>
+
+<footer>
+  <div>Data: Kalshi Trade API v2 (historical and live endpoints), Polymarket Gamma and CLOB price history, stats.nba.com. Program rules: Kalshi's February 11, 2026 CFTC filing and the Liquidity Incentive Program help-center article.</div>
+  <div>Every number in this report is produced by a script under <code>backtest/</code>, <code>strategies/</code> or <code>scripts/</code> in the project repository.</div>
+</footer>
+</div>
+
+<script>
+const DATA = {"reversal": [{"label": "At taker trades · 572 markets", "n": 572, "k": 11, "implied": 0.0552, "realized": 0.019230769230769232, "lo": 0.009638059041140632, "hi": 0.0341481776289352}, {"label": "Clock snapshots · trailing side · 2,883 markets", "n": 2883, "k": 183, "implied": 0.06204994797086369, "realized": 0.06347554630593132, "lo": 0.05484885717620383, "hi": 0.07300066636679815}, {"label": "Clock snapshots · leading side · 2,048 markets", "n": 2048, "k": 116, "implied": 0.0607763671875, "realized": 0.056640625, "lo": 0.047026003591846506, "hi": 0.06754744123123345}], "mm": [{"label": "Major leagues · pre-game", "rs": 0.072, "fee": 0.349}, {"label": "Major leagues · in-game", "rs": 0.015, "fee": 0.191}, {"label": "Long-tail · pre-game", "rs": -0.036, "fee": 0.0}, {"label": "Long-tail · in-game", "rs": 0.116, "fee": 0.0}], "leadlag": {"h": [1, 3, 5, 10], "pm_follows": [0.921, 0.962, 0.972, 0.989], "kalshi_follows": [-0.012, -0.023, -0.031, -0.049]}, "shadow": [{"label": "v2 · improve 1 tick", "id": "20261016T2021_off-1_v2", "hours": [0.0, 0.08333333333333333, 0.16666666666666666, 0.25, 0.3333333333333333, 0.4166666666666667, 0.5, 0.5833333333333334, 0.6666666666666666, 0.75, 0.8333333333333334, 0.9166666666666666, 2.9166666666666665, 5.0, 5.666666666666667, 5.75, 5.833333333333333, 5.916666666666667, 6.0, 6.083333333333333, 6.166666666666667, 6.25, 6.333333333333333, 6.416666666666667, 6.5, 6.583333333333333, 6.666666666666667, 6.75, 6.833333333333333, 6.916666666666667, 7.0, 7.25, 7.416666666666667, 7.5, 7.583333333333333, 7.666666666666667, 7.75, 7.833333333333333, 7.916666666666667, 8.0], "net": [-27.81, -19.13, -20.61, -11.56, -8.08, -4.32, -5.7, -5.76, 2.84, 5.83, 10.33, 11.9, 1.16, 1.12, -1.04, 1.94, 4.97, 8.08, 11.18, 14.25, 17.12, 20.31, 20.44, 23.47, 26.48, 29.18, 25.86, 32.22, 35.23, 34.67, 35.17, 1.25, 56.44, 57.99, 61.04, 64.35, 67.18, 70.22, 73.07, 73.83], "reward": [2.19, 5.8, 9.32, 13.0, 16.54, 20.23, 23.86, 27.48, 31.08, 34.73, 38.34, 39.91, 1.07, 0.93, 200.01, 203.04, 206.17, 209.14, 212.24, 215.27, 218.35, 221.35, 224.26, 227.3, 230.27, 233.24, 236.21, 239.07, 242.13, 245.02, 245.6, 1.25, 262.65, 265.54, 268.43, 271.44, 274.38, 277.29, 280.21, 281.08], "mtm": [-30.0, -24.93, -29.93, -24.55, -24.62, -24.55, -29.55, -33.24, -28.24, -28.9, -28.01, -28.01, 0.09, 0.19, -201.05, -201.1, -201.2, -201.06, -201.06, -201.02, -201.23, -201.04, -203.81, -203.83, -203.79, -204.07, -210.35, -206.85, -206.9, -210.35, -210.43, 0.0, -206.22, -207.55, -207.4, -207.09, -207.2, -207.08, -207.14, -207.25], "final": {"hours": 8.0, "reward": 281.08, "mtm": -207.25, "net": 73.83, "capital": 28400, "markets": 30, "fills": 94, "contracts": 4914, "mo30": -199.95, "categories": 8}}, {"label": "v2 · join best", "id": "20261016T2021_off0_v2", "hours": [0.0, 0.08333333333333333, 0.16666666666666666, 0.25, 0.3333333333333333, 0.4166666666666667, 0.5, 0.5833333333333334, 0.6666666666666666, 0.75, 0.8333333333333334, 0.9166666666666666, 2.9166666666666665, 4.75, 5.666666666666667, 5.75, 5.833333333333333, 5.916666666666667, 6.0, 6.083333333333333, 6.166666666666667, 6.25, 6.333333333333333, 6.416666666666667, 6.5, 6.583333333333333, 6.666666666666667, 6.75, 6.833333333333333, 6.916666666666667, 7.0, 7.25, 7.416666666666667, 7.5, 7.583333333333333, 7.666666666666667, 7.75, 7.833333333333333, 7.916666666666667, 8.0], "net": [1.68, 4.65, 7.51, 10.85, 13.73, 16.19, 19.25, 22.41, 25.84, 28.38, 32.07, 33.4, 0.77, 1.15, -8.31, -6.35, -3.11, -0.76, 1.78, 4.34, 6.43, 11.64, 11.74, 14.36, 16.91, 19.32, 19.13, 24.55, 27.02, 27.23, 27.62, 7.12, 44.19, 46.59, 49.14, 51.77, 55.02, 57.59, 59.42, 60.23], "reward": [1.68, 4.58, 7.45, 10.33, 13.19, 16.18, 19.24, 22.41, 25.49, 28.66, 31.76, 33.08, 0.77, 1.05, 176.1, 178.57, 181.17, 183.68, 186.23, 188.74, 191.26, 193.8, 196.34, 198.84, 201.41, 203.87, 206.37, 208.8, 211.23, 213.7, 214.13, 6.73, 228.04, 230.43, 232.82, 235.19, 237.59, 239.97, 242.35, 243.18], "mtm": [0.0, 0.07, 0.07, 0.52, 0.53, 0.01, 0.01, -0.01, 0.34, -0.29, 0.31, 0.31, 0.0, 0.09, -184.42, -184.92, -184.27, -184.44, -184.45, -184.4, -184.82, -182.16, -184.6, -184.48, -184.51, -184.54, -187.25, -184.25, -184.21, -186.46, -186.51, 0.39, -183.85, -183.85, -183.68, -183.42, -182.57, -182.37, -182.92, -182.96], "final": {"hours": 8.0, "reward": 243.18, "mtm": -182.96, "net": 60.23, "capital": 27990, "markets": 30, "fills": 126, "contracts": 5218, "mo30": -102.8, "categories": 9}}, {"label": "v1 · improve 1 tick", "id": "20261016T1828_off-1", "hours": [0.0, 0.08333333333333333, 0.16666666666666666, 0.25, 0.3333333333333333, 0.4166666666666667, 0.5, 0.5833333333333334, 0.6666666666666666, 0.75, 0.8333333333333334, 0.9166666666666666, 1.0, 1.0833333333333333, 1.1666666666666667, 1.25, 1.3333333333333333, 1.4166666666666667, 1.5, 1.5833333333333333, 1.6666666666666667, 1.75, 1.8333333333333333, 1.9166666666666667, 2.0, 2.0833333333333335, 2.1666666666666665, 2.25, 2.3333333333333335, 2.4166666666666665, 2.5, 2.5833333333333335, 2.6666666666666665, 2.75, 2.8333333333333335, 5.083333333333333, 6.916666666666667, 7.583333333333333, 7.666666666666667, 7.75, 7.833333333333333, 7.916666666666667, 8.0], "net": [1.98, 29.43, 38.3, 49.88, 58.48, 72.6, 83.61, 98.43, 106.69, 73.93, 40.08, 88.75, 164.55, 127.75, 171.48, 158.06, 196.02, 184.96, 147.38, 177.51, 183.91, 216.61, 254.52, 305.01, 328.97, 396.62, 643.17, 390.25, 580.22, 681.13, 538.75, 529.59, 536.72, 588.74, 590.17, 17.17, 71.96, 1370.39, 1376.79, 1402.66, 1705.84, 1662.84, 1534.37], "reward": [1.98, 14.85, 27.36, 41.37, 53.62, 67.74, 81.18, 95.91, 108.62, 120.47, 131.9, 143.14, 154.37, 166.37, 177.65, 189.91, 201.96, 213.26, 224.21, 236.12, 249.4, 262.61, 275.45, 288.96, 301.88, 314.69, 327.75, 340.84, 354.36, 366.59, 378.85, 390.51, 401.72, 412.4, 417.02, 17.17, 6.02, 1007.44, 1016.38, 1025.39, 1034.19, 1042.44, 1048.48], "mtm": [0.0, 14.58, 10.94, 8.5, 4.86, 4.86, 2.43, 2.52, -1.92, -46.54, -91.82, -54.39, 10.19, -38.61, -6.17, -31.85, -5.94, -28.3, -76.83, -58.61, -65.49, -46.0, -20.94, 16.05, 27.08, 81.93, 315.42, 49.41, 225.86, 314.54, 159.9, 139.08, 135.0, 176.34, 173.15, 0.0, 65.94, 362.95, 360.41, 377.28, 671.65, 620.4, 485.88], "final": {"hours": 8.0, "reward": 1048.48, "mtm": 485.88, "net": 1534.37, "capital": 26160, "markets": 30, "fills": 173, "contracts": 21454, "mo30": 280.96, "categories": null}}, {"label": "v1 · join best", "id": "20261016T1828_off0", "hours": [0.0, 0.08333333333333333, 0.16666666666666666, 0.25, 0.3333333333333333, 0.4166666666666667, 0.5, 0.5833333333333334, 0.6666666666666666, 0.75, 0.8333333333333334, 0.9166666666666666, 1.0, 1.0833333333333333, 1.1666666666666667, 1.25, 1.3333333333333333, 1.4166666666666667, 1.5, 1.5833333333333333, 1.6666666666666667, 1.75, 1.8333333333333333, 1.9166666666666667, 2.0, 2.0833333333333335, 2.1666666666666665, 2.25, 2.3333333333333335, 2.4166666666666665, 2.5, 2.5833333333333335, 2.6666666666666665, 2.75, 2.8333333333333335, 4.833333333333333, 6.916666666666667, 7.583333333333333, 7.666666666666667, 7.75, 7.833333333333333, 7.916666666666667, 8.0], "net": [1.34, 25.86, 27.61, 32.46, 36.78, 43.83, 47.72, 51.62, 12.57, 11.5, -19.03, 18.8, 99.2, 66.85, 93.03, 67.79, 95.4, 17.93, -68.3, -69.68, -47.15, -19.77, -19.22, -54.61, -62.36, -28.27, 186.22, -45.7, 135.66, 121.79, 87.59, 67.86, 44.66, 40.19, 32.25, -44.65, 7.38, 508.73, 512.31, 515.69, 518.8, 505.03, 539.92], "reward": [1.34, 8.85, 14.24, 21.53, 28.28, 36.54, 42.86, 48.03, 53.38, 59.37, 63.88, 69.0, 75.27, 80.54, 86.03, 90.48, 95.1, 99.31, 104.02, 110.09, 117.13, 123.67, 130.02, 137.0, 143.26, 150.02, 156.98, 163.46, 169.36, 175.08, 180.49, 185.75, 190.96, 195.16, 197.19, 5.35, 7.38, 542.52, 547.43, 552.46, 557.5, 562.5, 566.32], "mtm": [0.0, 17.01, 13.36, 10.93, 8.5, 7.29, 4.86, 3.59, -40.82, -47.87, -82.91, -50.2, 23.92, -13.69, 7.0, -22.69, 0.3, -81.38, -172.32, -179.77, -164.28, -143.44, -149.24, -191.61, -205.61, -178.29, 29.24, -209.16, -33.71, -53.28, -92.9, -117.89, -146.3, -154.97, -164.93, -50.0, 0.0, -33.79, -35.13, -36.77, -38.7, -57.46, -26.41], "final": {"hours": 8.0, "reward": 566.32, "mtm": -26.41, "net": 539.92, "capital": 26580, "markets": 30, "fills": 128, "contracts": 17652, "mo30": 34.26, "categories": null}}], "generated_at": "2026-10-17 04:24"};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function tip(fig) { let t = fig.querySelector(".tip"); if (!t) { t = document.createElement("div"); t.className = "tip"; t.hidden = true; fig.appendChild(t); } return t; }
+function showTip(fig, evt, html) { const t = tip(fig); const r = fig.getBoundingClientRect(); t.innerHTML = html; t.hidden = false;
+  const x = Math.min(Math.max(evt.clientX - r.left, 90), r.width - 90); t.style.left = x + "px"; t.style.top = (evt.clientY - r.top) + "px"; }
+function hideTip(fig) { tip(fig).hidden = true; }
+const pct = (v, d = 1) => (v * 100).toFixed(d) + "%";
+const usd = v => (v < 0 ? "−$" : "$") + Math.abs(v).toLocaleString("en-US", { maximumFractionDigits: 0 });
+
+const ICON_NO = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3l6 6M9 3l-6 6"/></svg>';
+const ICON_YES = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2.5 6.5l2.3 2.3L9.5 3.5"/></svg>';
+const SCORE = [
+  ["Machine learning beats the NBA closing price", "7 seasons of games; 2,898 Kalshi contracts", "Log loss: market 0.5685, model 0.6099", 0],
+  ["Tuning rescues the model", "107 parameter cells with t-tests", "0 cells with t > 1.65 (≈5 expected by chance)", 0],
+  ["Two-team arbitrage in the same game", "82,337 pre-game snapshots", "62 profitable after fees", 0],
+  ["Passive market making in major leagues", "27 series, 6.5M trades", "Spread 0.02–0.14¢ vs fee 0.2–0.4¢", 0],
+  ["Selling end-game longshots", "End-game snapshots, 9,452 markets", "Realized 6.35% vs implied 6.20%", 0],
+  ["Trading Kalshi on Polymarket signals", "2,351 MLB games, minute aligned", "Polymarket follows: β = 0.92, t = 213", 0],
+  ["Harvesting liquidity incentives", "6,657 programs; four shadow tests", "All four net positive; thin after adverse selection", 1],
+];
+document.getElementById("score").innerHTML = SCORE.map(r =>
+  `<tr><td>${r[0]}</td><td>${r[1]}</td><td class="mono" style="font-size:13px">${r[2]}</td><td>${r[3]
+    ? `<span class="pill yes">${ICON_YES}Holds</span>` : `<span class="pill no">${ICON_NO}Rejected</span>`}</td></tr>`).join("");
+
+function hbar(svgId, rows, opt) {
+  const svg = document.getElementById(svgId), fig = svg.closest(".figure");
+  const W = Math.max(300, Math.round(svg.parentElement.clientWidth - 36));
+  const narrow = W < 560, labelW = narrow ? 0 : (opt.labelW || 210);
+  const labH = narrow ? 18 : 0, rowH = (opt.rowH || 46) + labH, padT = 8, padB = 28;
+  const H = padT + rows.length * rowH + padB; svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const x0 = labelW, x1 = W - 56, [lo, hi] = opt.domain;
+  const X = v => x0 + (v - lo) / (hi - lo) * (x1 - x0);
+  opt.ticks.forEach(t => { el("line", { x1: X(t), x2: X(t), y1: padT, y2: H - padB, class: "grid" }, svg);
+    const tx = el("text", { x: X(t), y: H - 8, "text-anchor": "middle" }, svg); tx.textContent = opt.fmt(t); });
+  if (lo < 0) el("line", { x1: X(0), x2: X(0), y1: padT, y2: H - padB, class: "axis" }, svg);
+  rows.forEach((r, i) => {
+    const y = padT + i * rowH;
+    const lab = el("text", { x: 0, y: narrow ? y + 12 : y + rowH / 2 + 4, class: "lbl" }, svg); lab.textContent = r.label;
+    r.bars.forEach((b, j) => {
+      const by = y + labH + 8 + j * 15, bh = 11, xa = X(Math.min(0, b.v)), xb = X(Math.max(0, b.v));
+      el("rect", { x: Math.min(xa, xb), y: by, width: Math.max(1.5, Math.abs(xb - xa)), height: bh, rx: 3, fill: css(b.color) }, svg);
+      if (b.ci) { el("line", { x1: X(b.ci[0]), x2: X(b.ci[1]), y1: by + bh / 2, y2: by + bh / 2, stroke: css("--ink"), "stroke-width": 1.2 }, svg);
+        [b.ci[0], b.ci[1]].forEach(c => el("line", { x1: X(c), x2: X(c), y1: by + 2, y2: by + bh - 2, stroke: css("--ink"), "stroke-width": 1.2 }, svg)); }
+      const vt = el("text", { x: Math.max(xb, b.ci ? X(b.ci[1]) : xb) + 6, y: by + bh - 1 }, svg); vt.textContent = opt.fmt(b.v);
+      const hit = el("rect", { x: x0, y: by - 2, width: x1 - x0, height: bh + 4, fill: "transparent" }, svg);
+      hit.addEventListener("mousemove", e => showTip(fig, e, `${r.label}<br>${b.name}: ${opt.fmt(b.v)}${b.ci ? ` (95% CI ${opt.fmt(b.ci[0])}–${opt.fmt(b.ci[1])})` : ""}`));
+      hit.addEventListener("mouseleave", () => hideTip(fig));
+    });
+  });
+}
+
+function draw() {
+  document.querySelectorAll("svg.chart").forEach(s => s.innerHTML = "");
+  hbar("c-mm", DATA.mm.map(r => ({ label: r.label, bars: [
+      { name: "10-second realized spread", v: r.rs, color: "--s1" }, { name: "Maker fee", v: r.fee, color: "--s2" }] })),
+    { domain: [-0.1, 0.4], ticks: [-0.1, 0, 0.1, 0.2, 0.3, 0.4], fmt: v => v.toFixed(2) + "¢", labelW: 190 });
+  hbar("c-rev", DATA.reversal.map(r => ({ label: r.label, bars: [
+      { name: "Implied", v: r.implied, color: "--s1" },
+      { name: `Realized (${r.k}/${r.n.toLocaleString("en-US")})`, v: r.realized, color: "--s2", ci: [r.lo, r.hi] }] })),
+    { domain: [0, 0.09], ticks: [0, 0.02, 0.04, 0.06, 0.08], fmt: v => pct(v), labelW: 260 });
+  const L = DATA.leadlag;
+  hbar("c-ll", L.h.map((h, i) => ({ label: `Within ${h} min`, bars: [
+      { name: "Polymarket toward Kalshi", v: L.pm_follows[i], color: "--s1" },
+      { name: "Kalshi toward Polymarket", v: L.kalshi_follows[i], color: "--s2" }] })),
+    { domain: [-0.1, 1.0], ticks: [0, 0.25, 0.5, 0.75, 1.0], fmt: v => v.toFixed(2), labelW: 110 });
+  lines();
+}
+
+function lines() {
+  const runs = DATA.shadow, svg = document.getElementById("c-sh"), fig = svg.closest(".figure");
+  const COLORS = ["--s1", "--s2", "--faint", "--muted"], DASH = ["", "", "5 4", "2 4"];
+  document.getElementById("sh-legend").innerHTML = runs.map((r, i) =>
+    `<span><i style="background:var(${COLORS[i]})"></i>${r.label}</span>`).join("");
+  const W = Math.max(300, Math.round(svg.parentElement.clientWidth - 36)), H = W < 560 ? 240 : 300;
+  const pl = 56, pr = W < 560 ? 56 : 92, pt = 10, pb = 30;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const allY = runs.flatMap(r => r.net), maxH = Math.max(1, ...runs.map(r => r.hours[r.hours.length - 1] || 0));
+  let ylo = Math.min(0, ...allY), yhi = Math.max(1, ...allY); const pad = (yhi - ylo) * 0.08; ylo -= pad; yhi += pad;
+  const X = h => pl + h / maxH * (W - pl - pr), Y = v => pt + (yhi - v) / (yhi - ylo) * (H - pt - pb);
+  const step = niceStep((yhi - ylo) / 5);
+  for (let v = Math.ceil(ylo / step) * step; v <= yhi; v += step) {
+    el("line", { x1: pl, x2: W - pr, y1: Y(v), y2: Y(v), class: Math.abs(v) < 1e-9 ? "axis" : "grid" }, svg);
+    const t = el("text", { x: pl - 8, y: Y(v) + 4, "text-anchor": "end" }, svg); t.textContent = usd(v); }
+  const hs = niceStep(maxH / 6);
+  for (let h = 0; h <= maxH + 1e-9; h += hs) { const t = el("text", { x: X(h), y: H - 8, "text-anchor": "middle" }, svg); t.textContent = h.toFixed(h < 2 ? 1 : 0) + "h"; }
+  runs.forEach((r, i) => {
+    const d = r.hours.map((h, j) => `${j ? "L" : "M"}${X(h).toFixed(1)},${Y(r.net[j]).toFixed(1)}`).join("");
+    el("path", { d, fill: "none", stroke: css(COLORS[i]), "stroke-width": 2, "stroke-dasharray": DASH[i], "stroke-linejoin": "round" }, svg);
+    const lx = X(r.hours[r.hours.length - 1]), ly = Y(r.net[r.net.length - 1]);
+    el("circle", { cx: lx, cy: ly, r: 3.5, fill: css(COLORS[i]), stroke: css("--surface"), "stroke-width": 2 }, svg);
+    const t = el("text", { x: lx + 8, y: ly + 4, class: "lbl" }, svg); t.textContent = usd(r.net[r.net.length - 1]);
+  });
+  const cross = el("line", { y1: pt, y2: H - pb, class: "axis", visibility: "hidden" }, svg);
+  const hit = el("rect", { x: pl, y: pt, width: W - pl - pr, height: H - pt - pb, fill: "transparent" }, svg);
+  hit.addEventListener("mousemove", e => {
+    const b = svg.getBoundingClientRect(), h = ((e.clientX - b.left) / b.width * W - pl) / (W - pl - pr) * maxH;
+    cross.setAttribute("x1", X(Math.max(0, h))); cross.setAttribute("x2", X(Math.max(0, h))); cross.setAttribute("visibility", "visible");
+    const rows = runs.map(r => { let j = r.hours.findIndex(x => x >= h); if (j < 0) j = r.hours.length - 1;
+      return `${r.label}: net ${usd(r.net[j])} (reward ${usd(r.reward[j])}, inventory ${usd(r.mtm[j])})`; });
+    showTip(fig, e, `Hour ${h.toFixed(1)}<br>` + rows.join("<br>"));
+  });
+  hit.addEventListener("mouseleave", () => { cross.setAttribute("visibility", "hidden"); hideTip(fig); });
+
+  const money = v => `<span style="color:var(${v >= 0 ? "--good" : "--bad"})">${v >= 0 ? "+" : ""}${usd(v)}</span>`;
+  document.getElementById("sh-table").innerHTML = runs.map(r => { const f = r.final;
+    return `<tr><td>${r.label}</td><td class="n">${f.markets}</td><td class="n">${usd(f.reward)}</td><td class="n">${money(f.mtm)}</td>
+      <td class="n">${money(f.net)}</td><td class="n">${f.fills} · ${(f.contracts || 0).toLocaleString("en-US")} ct</td>
+      <td class="n">${money(f.mo30 || 0)}</td><td class="n">${usd(f.capital)}</td></tr>`; }).join("");
+}
+(function status() {
+  const st = document.getElementById("sh-status"); if (!st || !DATA.generated_at) return;
+  const done = DATA.shadow.every(r => r.final.hours >= 7.9);
+  st.textContent = (done ? "All runs complete" : "Runs in progress") + "; data as of " + DATA.generated_at + " UTC. Inventory is marked to mid until markets settle.";
+})();
+function niceStep(x) { const p = Math.pow(10, Math.floor(Math.log10(x))); const m = x / p; return (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p; }
+
+draw();
+let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(draw, 120); });
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+</script>

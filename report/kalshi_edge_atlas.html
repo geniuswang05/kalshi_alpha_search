@@ -1,0 +1,340 @@
+<title>Kalshi Edge Atlas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;900&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (~44rem) with charts allowed to widen to ~62rem; a ticker-tape strip of verdicts up top. */
+:root {
+  --bg: #f4f6f8; --surface: #ffffff; --ink: #141a22; --muted: #5a6474; --faint: #8a93a2;
+  --line: #dde2e8; --grid: #e9edf1;
+  --s1: #2a78d6; --s2: #eb6834;
+  --good: #17784a; --good-bg: #e3f3ea; --bad: #b93636; --bad-bg: #f8e5e4;
+  --hl: #fff4d6;
+  --f-display: "Noto Serif SC", "Songti SC", Georgia, serif;
+  --f-body: "Noto Sans SC", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0e1116; --surface: #161b22; --ink: #e7ebf0; --muted: #9ba5b4; --faint: #6f7886;
+  --line: #2a313b; --grid: #222932; --s1: #3987e5; --s2: #d95926;
+  --good: #4cc38a; --good-bg: #133524; --bad: #ec7b7b; --bad-bg: #3a1a1a; --hl: #3a3218;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0e1116; --surface: #161b22; --ink: #e7ebf0; --muted: #9ba5b4; --faint: #6f7886;
+  --line: #2a313b; --grid: #222932; --s1: #3987e5; --s2: #d95926;
+  --good: #4cc38a; --good-bg: #133524; --bad: #ec7b7b; --bad-bg: #3a1a1a; --hl: #3a3218;
+  color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.75;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 64px; }
+.wrap { max-width: 62rem; margin: 0 auto; }
+.col { max-width: 44rem; }
+header { padding-block: 56px 28px; display: grid; gap: 14px; }
+.eyebrow { font-family: var(--f-mono); font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { font-family: var(--f-display); font-weight: 900; font-size: clamp(2.2rem, 6vw, 3.6rem); line-height: 1.12; margin: 0; text-wrap: balance; }
+.lede { font-size: 1.12rem; color: var(--muted); margin: 0; max-width: 40rem; }
+h2 { font-family: var(--f-display); font-weight: 600; font-size: 1.6rem; line-height: 1.3; margin: 0 0 10px; text-wrap: balance; }
+h3 { font-size: 1.02rem; margin: 0; }
+p { margin: 0; }
+section { padding-block: 40px; border-top: 1px solid var(--line); display: grid; gap: 16px; }
+.sec-num { font-family: var(--f-mono); color: var(--faint); font-size: 13px; }
+.num, td.n, .mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+mark { background: var(--hl); color: inherit; padding: 0 .15em; border-radius: 2px; }
+a { color: var(--s1); }
+code { font-family: var(--f-mono); font-size: .88em; background: var(--grid); padding: .05em .35em; border-radius: 4px; overflow-wrap: anywhere; }
+
+.tldr { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px; display: grid; gap: 10px; }
+.tldr h3 { font-family: var(--f-mono); font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14.5px; }
+th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 500; color: var(--muted); font-size: 12.5px; letter-spacing: .04em; }
+tr:last-child td { border-bottom: 0; }
+td.n { text-align: right; white-space: nowrap; }
+.pill { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 500; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
+.pill.no { color: var(--bad); background: var(--bad-bg); }
+.pill.yes { color: var(--good); background: var(--good-bg); }
+.pill svg { width: 12px; height: 12px; }
+
+.figure { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 18px 12px; display: grid; gap: 10px; position: relative; }
+.figure .cap { font-size: 13.5px; color: var(--muted); }
+.figure h3 { font-size: 15px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+svg.chart { width: 100%; height: auto; display: block; overflow: visible; }
+svg.chart text { fill: var(--muted); font-family: var(--f-mono); font-size: 11px; }
+svg.chart .lbl { fill: var(--ink); font-family: var(--f-body); font-size: 12px; }
+svg.chart .grid { stroke: var(--grid); stroke-width: 1; }
+svg.chart .axis { stroke: var(--line); stroke-width: 1; }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 12.5px; line-height: 1.5;
+  padding: 7px 10px; border-radius: 6px; white-space: nowrap; transform: translate(-50%, calc(-100% - 10px)); }
+.tip[hidden] { display: none !important; }
+.steps { display: grid; gap: 12px; counter-reset: s; padding: 0; margin: 0; list-style: none; }
+.steps li { display: grid; grid-template-columns: 2rem 1fr; gap: 10px; }
+.steps li::before { counter-increment: s; content: counter(s); font-family: var(--f-mono); font-size: 13px; color: var(--muted);
+  width: 1.7rem; height: 1.7rem; border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; margin-top: 2px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 14px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: grid; gap: 6px; min-width: 0; }
+.card .k { font-family: var(--f-mono); font-size: 12px; color: var(--muted); letter-spacing: .05em; text-transform: uppercase; }
+.card .v { font-family: var(--f-mono); font-size: 1.6rem; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.card .v.pos { color: var(--good); } .card .v.neg { color: var(--bad); }
+.note { font-size: 14px; color: var(--muted); }
+ul.plain { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+footer { padding-block: 32px 0; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); display: grid; gap: 6px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Kalshi 预测市场 · 量化研究 · 2026 年 10 月</div>
+  <h1>Kalshi Edge Atlas</h1>
+  <p class="lede">在一个被职业资金定价的预测市场里，散户量化还能从哪里赚到钱？我们用 650 万笔真实成交、9,452 个市场的终局 K 线、2,351 场跨平台对齐的比赛，逐一检验了七个假设。</p>
+</header>
+
+<div class="col tldr">
+  <h3>结论先行</h3>
+  <p>六个"靠信息或定价错误赚钱"的假设全部被证伪：机器学习打不过收盘价，主流联赛的做市价差覆盖不了手续费，看起来 p&lt;0.0001 的终局冷门偏差在更大、更干净的检验下消失，Polymarket 反而跟随 Kalshi。</p>
+  <p>唯一站得住的正期望来源是<mark>交易所自己发的流动性补贴（LIP）</mark>：它奖励挂单而不是预测。我们按官方计分规则实现了一个做市机器人，并在实时订单簿上做了影子前向测试。</p>
+</div>
+
+<section>
+  <div class="sec-num">01 · 记分牌</div>
+  <h2>七个假设，一个幸存者</h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>假设</th><th>证据</th><th>关键数字</th><th>结论</th></tr></thead>
+      <tbody id="score"></tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="sec-num">02 · 信息战</div>
+  <h2>收盘价比模型更懂比赛</h2>
+  <div class="col" style="display:grid;gap:12px">
+    <p>起点是一个 XGBoost 胜负模型：7 个赛季的 Elo、滚动攻防效率、休息日程，后来加入按 Game Score 计价的球员缺阵特征。对 2025-26 赛季 1,068 场比赛做严格样本外预测，和开赛前 4 小时的 Kalshi 真实价格比较。</p>
+    <p>市场 logloss <span class="num">0.5685</span>，模型 <span class="num">0.6099</span>；即使让模型"偷看"当天实际谁没上场，也只到 <span class="num">0.5940</span>。把两者放进同一个 logistic 回归，模型的系数是 <span class="num">0.004</span>——它知道的，价格都已经知道。107 组参数扫描没有一组 t&gt;1.65。</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-num">03 · 做市的账</div>
+  <h2>价差在，但被手续费和逆向选择吃完了</h2>
+  <p class="col">把每笔成交的对手方（挂单方）当作做市商，用成交后 10 秒的成交均价衡量它当场能锁定的价差。主流联赛的 1¢ 报价价差，落到 maker 手里只剩零点几美分，而 Kalshi 对这些系列收取 taker 费 25% 的 maker 费。</p>
+  <div class="figure" data-chart="mm">
+    <h3>每张合约：maker 已实现价差 vs maker 手续费（美分）</h3>
+    <div class="legend"><span><i style="background:var(--s1)"></i>10 秒已实现价差</span><span><i style="background:var(--s2)"></i>maker 手续费</span></div>
+    <svg class="chart" id="c-mm" role="img" aria-label="已实现价差与手续费对比"></svg>
+    <div class="cap">27 个体育系列、1,080 个市场的分层成交样本；主流联赛 = 收 maker 费的系列。</div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-num">04 · 方法论</div>
+  <h2>一个 p &lt; 0.0001 的假发现</h2>
+  <div class="col" style="display:grid;gap:12px">
+    <p>最诱人的信号出现在比赛最后阶段：价格 2–10¢ 的冷门，在成交样本里 572 个市场只逆转了 11 次，而价格隐含应是 31.5 次。挂单卖冷门每张净赚 3.6¢，样本外 t=5.4。我们没有直接相信它。</p>
+    <ol class="steps">
+      <li><p><b>发现抽样偏差。</b>每个时间窗口只取"最近 1000 笔"成交，而奇迹逆转会引发巨量成交，把逆转前的冷门成交挤出样本。于是对 1,242 个被截断的窗口做完整翻页。信号仍在。</p></li>
+      <li><p><b>换一种与成交量无关的抽样。</b>在事前可知的终局窗口里每 5 分钟取一次快照，样本扩大到 9,452 个市场。两侧的冷门都完全校准。</p></li>
+      <li><p><b>定位异常来源。</b>在成交样本的同一批市场上做快照检验，逆转率同样偏低。异常来自那批样本自身的结果，不是"散户下单时刻"的定价错误；在多次切分之后，它属于偶然。</p></li>
+    </ol>
+  </div>
+  <div class="figure" data-chart="rev">
+    <h3>终局冷门的逆转率：价格隐含 vs 实际（含 95% 置信区间）</h3>
+    <div class="legend"><span><i style="background:var(--s1)"></i>价格隐含概率</span><span><i style="background:var(--s2)"></i>实际逆转率</span></div>
+    <svg class="chart" id="c-rev" role="img" aria-label="逆转率检验"></svg>
+    <div class="cap">冷门 = 终局窗口内价格 2–10¢ 的一侧。窗口锚定在建市场时公布的 expected_expiration_time 加联赛偏移，偏移只用前半段数据估计。</div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-num">05 · 跨平台</div>
+  <h2>比赛进行中，是 Polymarket 在追 Kalshi</h2>
+  <p class="col">对齐 2,351 场 MLB 比赛的分钟级价格，回归"两边价差能否预测下一段价格变动"。比赛中 Polymarket 一分钟内就消化了价差的 92%，Kalshi 几乎不理会 Polymarket。用 Polymarket 当信号在 Kalshi 交易，所有参数组合样本内 t&lt;1，样本外亏损。</p>
+  <div class="figure" data-chart="ll">
+    <h3>价差被消化的比例 β（比赛中，按预测窗口）</h3>
+    <div class="legend"><span><i style="background:var(--s1)"></i>Polymarket 向 Kalshi 收敛</span><span><i style="background:var(--s2)"></i>Kalshi 向 Polymarket 收敛</span></div>
+    <svg class="chart" id="c-ll" role="img" aria-label="领先滞后系数"></svg>
+    <div class="cap">β = 1 表示价差在该窗口内被完全消化。按比赛逐场回归后跨比赛取均值；1 分钟窗口 t = 213。</div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-num">06 · 幸存者</div>
+  <h2>交易所付钱买流动性，这笔钱不需要预测</h2>
+  <div class="col" style="display:grid;gap:12px">
+    <p>Kalshi 的 Liquidity Incentive Program 每秒给订单簿拍一次快照。每一侧从最优买价往下，按整个价位纳入挂单，直到累计量达到 Target Size；离参考价每远一个 tick，分数乘一次 Discount Factor。你的奖励等于你在全部合格挂单里的分数占比，乘以这个市场这段时间的奖金。<b>挂单不需要成交。</b></p>
+    <p>2026 年 8–12 月的计划合计约 <span class="num">$1,340 万</span>，此刻有 <span class="num">6,657</span> 个计划在进行、合计 <span class="num">$77.5 万</span>，大部分在油价、天气、榜单、政治这类非体育市场。一半市场的最优价已被职业做市商挤满（1¢ 价差，深度中位 13,634 张）；另一半价差 2¢ 以上，在价差内挂满 Target Size 就能拿到大份额，代价是成为最容易被吃单的那个报价。</p>
+  </div>
+  <div class="figure" data-chart="sh">
+    <h3>影子做市前向测试：累计净收益（奖励 + 库存盯市）</h3>
+    <div class="note" id="sh-status"></div>
+    <div class="legend" id="sh-legend"></div>
+    <svg class="chart" id="c-sh" role="img" aria-label="影子做市累计净收益"></svg>
+    <div class="cap">每 30 秒读取真实订单簿与成交：按官方规则计算假想挂单的奖励份额，打到假想报价的真实成交记为成交并按中间价盯市。不下任何真实订单。</div>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>测试组</th><th>选市场方式</th><th class="n">运行</th><th class="n">奖励（上限）</th><th class="n">库存盯市</th><th class="n">净收益</th><th class="n">名义资金</th></tr></thead>
+      <tbody id="sh-table"></tbody>
+    </table>
+  </div>
+  <p class="note col">v1 的 30 个市场几乎全是各州 AAA 油价日合约（每个州是独立系列，"每系列 ≤3"没有起到分散作用），单个密苏里州市场两小时被逆向选择亏掉 $153。v2 改为按官方类别分散（每类 ≤6、每系列 ≤2）、单市场止损（亏损超过 max($10, 2×已得奖励) 即撤单）、剔除测试结束后 6 小时内就结算的市场。</p>
+</section>
+
+<section>
+  <div class="sec-num">07 · 策略说明书</div>
+  <h2>Subsidy Harvester</h2>
+  <div class="grid2">
+    <div class="card"><h3>选市场</h3><p class="note">活跃 LIP 市场中价差 ≤20¢、过去 24 小时打到报价的成交量 &lt; 挂单量的 25%、计划在持仓期内有效；按"奖励 ÷ 资金"排序，按类别和系列分散。</p></div>
+    <div class="card"><h3>报价</h3><p class="note">两侧各挂 Target Size。价差 ≥3¢ 时各改善 1 个 tick 抢到队首，否则加入最优价。YES 与 NO 同时成交即锁定 $1，直接对冲。</p></div>
+    <div class="card"><h3>风控</h3><p class="note">单边净库存 ≤ Target Size；单市场止损；临近结算或已知信息发布前撤单；排除价差 &gt;20¢ 的"死盘"，避免被认定为有违计划目的。</p></div>
+    <div class="card"><h3>要验证的</h3><p class="note">影子单不会引起对手反应，所以奖励份额是上限。下一步是用真实小额订单（先在 Kalshi demo 环境）测出均衡份额。</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="sec-num">08 · 局限</div>
+  <h2>这份报告不能证明什么</h2>
+  <ul class="plain col">
+    <li>LIP 份额来自模拟。真实挂单会引来对手加量竞争，均衡份额只能用真金白银测量。</li>
+    <li>影子测试只有数小时，覆盖的信息事件有限；逆向选择的尾部风险（如油价日更新、数据公布）需要更长的样本。</li>
+    <li>激励计划由 Kalshi 单方面设定，可以随时修改或终止；奖励按期结算，最低支付 $1。</li>
+    <li>所有回测与前向测试都没有执行真实交易，也不构成投资建议。</li>
+  </ul>
+</section>
+
+<footer>
+  <div>数据：Kalshi Trade API v2（historical + live 端点）、Polymarket Gamma / CLOB 价格历史、stats.nba.com。计分规则：Kalshi 2026-02-11 CFTC 备案与帮助中心 LIP 说明。</div>
+  <div>代码：backtest/、strategies/、scripts/ 下的每个结论都有对应脚本，可完整复现。</div>
+</footer>
+</div>
+
+<script>
+const DATA = {"reversal": [{"label": "成交时刻 · 572 个市场", "n": 572, "k": 11, "implied": 0.0552, "realized": 0.019230769230769232, "lo": 0.009638059041140632, "hi": 0.0341481776289352}, {"label": "随机时刻 · 落后方 YES · 2,883 个市场", "n": 2883, "k": 183, "implied": 0.06204994797086369, "realized": 0.06347554630593132, "lo": 0.05484885717620383, "hi": 0.07300066636679815}, {"label": "随机时刻 · 领先方 NO · 2,048 个市场", "n": 2048, "k": 116, "implied": 0.0607763671875, "realized": 0.056640625, "lo": 0.047026003591846506, "hi": 0.06754744123123345}], "mm": [{"label": "主流联赛 · 赛前", "rs": 0.072, "fee": 0.349}, {"label": "主流联赛 · 比赛中", "rs": 0.015, "fee": 0.191}, {"label": "长尾赛事 · 赛前", "rs": -0.036, "fee": 0.0}, {"label": "长尾赛事 · 比赛中", "rs": 0.116, "fee": 0.0}], "leadlag": {"h": [1, 3, 5, 10], "pm_follows": [0.921, 0.962, 0.972, 0.989], "kalshi_follows": [-0.012, -0.023, -0.031, -0.049]}, "shadow": [{"label": "v2 改善价格", "id": "20261016T2021_off-1_v2", "hours": [0.0, 0.08333333333333333, 0.16666666666666666, 0.25, 0.3333333333333333, 0.4166666666666667, 0.5, 0.5833333333333334, 0.6666666666666666, 0.75, 0.8333333333333334, 0.9166666666666666, 2.9166666666666665, 5.0, 5.666666666666667, 5.75, 5.833333333333333, 5.916666666666667, 6.0, 6.083333333333333, 6.166666666666667, 6.25, 6.333333333333333, 6.416666666666667, 6.5, 6.583333333333333, 6.666666666666667, 6.75, 6.833333333333333, 6.916666666666667, 7.0, 7.25, 7.416666666666667, 7.5, 7.583333333333333, 7.666666666666667, 7.75, 7.833333333333333, 7.916666666666667, 8.0], "net": [-27.81, -19.13, -20.61, -11.56, -8.08, -4.32, -5.7, -5.76, 2.84, 5.83, 10.33, 11.9, 1.16, 1.12, -1.04, 1.94, 4.97, 8.08, 11.18, 14.25, 17.12, 20.31, 20.44, 23.47, 26.48, 29.18, 25.86, 32.22, 35.23, 34.67, 35.17, 1.25, 56.44, 57.99, 61.04, 64.35, 67.18, 70.22, 73.07, 73.83], "reward": [2.19, 5.8, 9.32, 13.0, 16.54, 20.23, 23.86, 27.48, 31.08, 34.73, 38.34, 39.91, 1.07, 0.93, 200.01, 203.04, 206.17, 209.14, 212.24, 215.27, 218.35, 221.35, 224.26, 227.3, 230.27, 233.24, 236.21, 239.07, 242.13, 245.02, 245.6, 1.25, 262.65, 265.54, 268.43, 271.44, 274.38, 277.29, 280.21, 281.08], "mtm": [-30.0, -24.93, -29.93, -24.55, -24.62, -24.55, -29.55, -33.24, -28.24, -28.9, -28.01, -28.01, 0.09, 0.19, -201.05, -201.1, -201.2, -201.06, -201.06, -201.02, -201.23, -201.04, -203.81, -203.83, -203.79, -204.07, -210.35, -206.85, -206.9, -210.35, -210.43, 0.0, -206.22, -207.55, -207.4, -207.09, -207.2, -207.08, -207.14, -207.25], "final": {"hours": 8.0, "reward": 281.08, "mtm": -207.25, "net": 73.83, "capital": 28400, "markets": 30, "fills": 94, "contracts": 4914, "mo30": -199.95, "categories": 8}}, {"label": "v2 加入最优价", "id": "20261016T2021_off0_v2", "hours": [0.0, 0.08333333333333333, 0.16666666666666666, 0.25, 0.3333333333333333, 0.4166666666666667, 0.5, 0.5833333333333334, 0.6666666666666666, 0.75, 0.8333333333333334, 0.9166666666666666, 2.9166666666666665, 4.75, 5.666666666666667, 5.75, 5.833333333333333, 5.916666666666667, 6.0, 6.083333333333333, 6.166666666666667, 6.25, 6.333333333333333, 6.416666666666667, 6.5, 6.583333333333333, 6.666666666666667, 6.75, 6.833333333333333, 6.916666666666667, 7.0, 7.25, 7.416666666666667, 7.5, 7.583333333333333, 7.666666666666667, 7.75, 7.833333333333333, 7.916666666666667, 8.0], "net": [1.68, 4.65, 7.51, 10.85, 13.73, 16.19, 19.25, 22.41, 25.84, 28.38, 32.07, 33.4, 0.77, 1.15, -8.31, -6.35, -3.11, -0.76, 1.78, 4.34, 6.43, 11.64, 11.74, 14.36, 16.91, 19.32, 19.13, 24.55, 27.02, 27.23, 27.62, 7.12, 44.19, 46.59, 49.14, 51.77, 55.02, 57.59, 59.42, 60.23], "reward": [1.68, 4.58, 7.45, 10.33, 13.19, 16.18, 19.24, 22.41, 25.49, 28.66, 31.76, 33.08, 0.77, 1.05, 176.1, 178.57, 181.17, 183.68, 186.23, 188.74, 191.26, 193.8, 196.34, 198.84, 201.41, 203.87, 206.37, 208.8, 211.23, 213.7, 214.13, 6.73, 228.04, 230.43, 232.82, 235.19, 237.59, 239.97, 242.35, 243.18], "mtm": [0.0, 0.07, 0.07, 0.52, 0.53, 0.01, 0.01, -0.01, 0.34, -0.29, 0.31, 0.31, 0.0, 0.09, -184.42, -184.92, -184.27, -184.44, -184.45, -184.4, -184.82, -182.16, -184.6, -184.48, -184.51, -184.54, -187.25, -184.25, -184.21, -186.46, -186.51, 0.39, -183.85, -183.85, -183.68, -183.42, -182.57, -182.37, -182.92, -182.96], "final": {"hours": 8.0, "reward": 243.18, "mtm": -182.96, "net": 60.23, "capital": 27990, "markets": 30, "fills": 126, "contracts": 5218, "mo30": -102.8, "categories": 9}}, {"label": "v1 改善价格", "id": "20261016T1828_off-1", "hours": [0.0, 0.08333333333333333, 0.16666666666666666, 0.25, 0.3333333333333333, 0.4166666666666667, 0.5, 0.5833333333333334, 0.6666666666666666, 0.75, 0.8333333333333334, 0.9166666666666666, 1.0, 1.0833333333333333, 1.1666666666666667, 1.25, 1.3333333333333333, 1.4166666666666667, 1.5, 1.5833333333333333, 1.6666666666666667, 1.75, 1.8333333333333333, 1.9166666666666667, 2.0, 2.0833333333333335, 2.1666666666666665, 2.25, 2.3333333333333335, 2.4166666666666665, 2.5, 2.5833333333333335, 2.6666666666666665, 2.75, 2.8333333333333335, 5.083333333333333, 6.916666666666667, 7.583333333333333, 7.666666666666667, 7.75, 7.833333333333333, 7.916666666666667, 8.0], "net": [1.98, 29.43, 38.3, 49.88, 58.48, 72.6, 83.61, 98.43, 106.69, 73.93, 40.08, 88.75, 164.55, 127.75, 171.48, 158.06, 196.02, 184.96, 147.38, 177.51, 183.91, 216.61, 254.52, 305.01, 328.97, 396.62, 643.17, 390.25, 580.22, 681.13, 538.75, 529.59, 536.72, 588.74, 590.17, 17.17, 71.96, 1370.39, 1376.79, 1402.66, 1705.84, 1662.84, 1534.37], "reward": [1.98, 14.85, 27.36, 41.37, 53.62, 67.74, 81.18, 95.91, 108.62, 120.47, 131.9, 143.14, 154.37, 166.37, 177.65, 189.91, 201.96, 213.26, 224.21, 236.12, 249.4, 262.61, 275.45, 288.96, 301.88, 314.69, 327.75, 340.84, 354.36, 366.59, 378.85, 390.51, 401.72, 412.4, 417.02, 17.17, 6.02, 1007.44, 1016.38, 1025.39, 1034.19, 1042.44, 1048.48], "mtm": [0.0, 14.58, 10.94, 8.5, 4.86, 4.86, 2.43, 2.52, -1.92, -46.54, -91.82, -54.39, 10.19, -38.61, -6.17, -31.85, -5.94, -28.3, -76.83, -58.61, -65.49, -46.0, -20.94, 16.05, 27.08, 81.93, 315.42, 49.41, 225.86, 314.54, 159.9, 139.08, 135.0, 176.34, 173.15, 0.0, 65.94, 362.95, 360.41, 377.28, 671.65, 620.4, 485.88], "final": {"hours": 8.0, "reward": 1048.48, "mtm": 485.88, "net": 1534.37, "capital": 26160, "markets": 30, "fills": 173, "contracts": 21454, "mo30": 280.96, "categories": null}}, {"label": "v1 加入最优价", "id": "20261016T1828_off0", "hours": [0.0, 0.08333333333333333, 0.16666666666666666, 0.25, 0.3333333333333333, 0.4166666666666667, 0.5, 0.5833333333333334, 0.6666666666666666, 0.75, 0.8333333333333334, 0.9166666666666666, 1.0, 1.0833333333333333, 1.1666666666666667, 1.25, 1.3333333333333333, 1.4166666666666667, 1.5, 1.5833333333333333, 1.6666666666666667, 1.75, 1.8333333333333333, 1.9166666666666667, 2.0, 2.0833333333333335, 2.1666666666666665, 2.25, 2.3333333333333335, 2.4166666666666665, 2.5, 2.5833333333333335, 2.6666666666666665, 2.75, 2.8333333333333335, 4.833333333333333, 6.916666666666667, 7.583333333333333, 7.666666666666667, 7.75, 7.833333333333333, 7.916666666666667, 8.0], "net": [1.34, 25.86, 27.61, 32.46, 36.78, 43.83, 47.72, 51.62, 12.57, 11.5, -19.03, 18.8, 99.2, 66.85, 93.03, 67.79, 95.4, 17.93, -68.3, -69.68, -47.15, -19.77, -19.22, -54.61, -62.36, -28.27, 186.22, -45.7, 135.66, 121.79, 87.59, 67.86, 44.66, 40.19, 32.25, -44.65, 7.38, 508.73, 512.31, 515.69, 518.8, 505.03, 539.92], "reward": [1.34, 8.85, 14.24, 21.53, 28.28, 36.54, 42.86, 48.03, 53.38, 59.37, 63.88, 69.0, 75.27, 80.54, 86.03, 90.48, 95.1, 99.31, 104.02, 110.09, 117.13, 123.67, 130.02, 137.0, 143.26, 150.02, 156.98, 163.46, 169.36, 175.08, 180.49, 185.75, 190.96, 195.16, 197.19, 5.35, 7.38, 542.52, 547.43, 552.46, 557.5, 562.5, 566.32], "mtm": [0.0, 17.01, 13.36, 10.93, 8.5, 7.29, 4.86, 3.59, -40.82, -47.87, -82.91, -50.2, 23.92, -13.69, 7.0, -22.69, 0.3, -81.38, -172.32, -179.77, -164.28, -143.44, -149.24, -191.61, -205.61, -178.29, 29.24, -209.16, -33.71, -53.28, -92.9, -117.89, -146.3, -154.97, -164.93, -50.0, 0.0, -33.79, -35.13, -36.77, -38.7, -57.46, -26.41], "final": {"hours": 8.0, "reward": 566.32, "mtm": -26.41, "net": 539.92, "capital": 26580, "markets": 30, "fills": 128, "contracts": 17652, "mo30": 34.26, "categories": null}}], "generated_at": "2026-10-17 04:24"};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, parent) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function tip(fig) { let t = fig.querySelector(".tip"); if (!t) { t = document.createElement("div"); t.className = "tip"; t.hidden = true; fig.appendChild(t); } return t; }
+function showTip(fig, evt, html) { const t = tip(fig); const r = fig.getBoundingClientRect(); t.innerHTML = html; t.hidden = false;
+  const x = Math.min(Math.max(evt.clientX - r.left, 80), r.width - 80); t.style.left = x + "px"; t.style.top = (evt.clientY - r.top) + "px"; }
+function hideTip(fig) { tip(fig).hidden = true; }
+const pct = (v, d = 1) => (v * 100).toFixed(d) + "%";
+
+const ICON_NO = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3l6 6M9 3l-6 6"/></svg>';
+const ICON_YES = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2.5 6.5l2.3 2.3L9.5 3.5"/></svg>';
+const SCORE = [
+  ["机器学习预测 NBA 胜负", "7 赛季比赛 + 2,898 个 Kalshi 合约", "logloss 市场 0.5685 / 模型 0.6099", 0],
+  ["调参救回模型", "107 组参数 × t 检验", "0 组 t>1.65（随机预期 ~5）", 0],
+  ["同场两队合约套利", "82,337 个赛前快照", "扣费后 62 个为正", 0],
+  ["主流联赛被动做市", "27 系列、650 万笔成交", "价差 0.02–0.14¢ < 费 0.2–0.4¢", 0],
+  ["终局卖冷门", "9,452 个市场终局快照", "6.35% 实际 vs 6.20% 隐含", 0],
+  ["Polymarket 信号交易 Kalshi", "2,351 场 MLB 分钟对齐", "PM 追 Kalshi，β=0.92 (t=213)", 0],
+  ["收割流动性激励 LIP", "6,657 个计划 + 影子前向测试", "见第 06 节", 1],
+];
+document.getElementById("score").innerHTML = SCORE.map(r =>
+  `<tr><td>${r[0]}</td><td>${r[1]}</td><td class="mono" style="font-size:13px">${r[2]}</td><td>${r[3]
+    ? `<span class="pill yes">${ICON_YES}成立</span>` : `<span class="pill no">${ICON_NO}证伪</span>`}</td></tr>`).join("");
+
+function hbar(svgId, rows, opt) {
+  const svg = document.getElementById(svgId), fig = svg.closest(".figure");
+  const W = Math.max(300, Math.round(svg.parentElement.clientWidth - 36));
+  const narrow = W < 560, labelW = narrow ? 0 : (opt.labelW || 210);
+  const labH = narrow ? 18 : 0, rowH = (opt.rowH || 46) + labH, padT = 8, padB = 28;
+  const H = padT + rows.length * rowH + padB; svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const x0 = labelW, x1 = W - 56, [lo, hi] = opt.domain;
+  const X = v => x0 + (v - lo) / (hi - lo) * (x1 - x0);
+  opt.ticks.forEach(t => { el("line", { x1: X(t), x2: X(t), y1: padT, y2: H - padB, class: "grid" }, svg);
+    const tx = el("text", { x: X(t), y: H - 8, "text-anchor": "middle" }, svg); tx.textContent = opt.fmt(t); });
+  if (lo < 0) el("line", { x1: X(0), x2: X(0), y1: padT, y2: H - padB, class: "axis" }, svg);
+  rows.forEach((r, i) => {
+    const y = padT + i * rowH;
+    const lab = el("text", { x: 0, y: narrow ? y + 12 : y + rowH / 2 + 4, class: "lbl" }, svg); lab.textContent = r.label;
+    r.bars.forEach((b, j) => {
+      const by = y + labH + 8 + j * 15, bh = 11, xa = X(Math.min(0, b.v)), xb = X(Math.max(0, b.v));
+      const rect = el("rect", { x: Math.min(xa, xb), y: by, width: Math.max(1.5, Math.abs(xb - xa)), height: bh, rx: 3, fill: css(b.color) }, svg);
+      if (b.ci) { el("line", { x1: X(b.ci[0]), x2: X(b.ci[1]), y1: by + bh / 2, y2: by + bh / 2, stroke: css("--ink"), "stroke-width": 1.2 }, svg);
+        [b.ci[0], b.ci[1]].forEach(c => el("line", { x1: X(c), x2: X(c), y1: by + 2, y2: by + bh - 2, stroke: css("--ink"), "stroke-width": 1.2 }, svg)); }
+      const vt = el("text", { x: Math.max(xb, b.ci ? X(b.ci[1]) : xb) + 6, y: by + bh - 1 }, svg); vt.textContent = opt.fmt(b.v);
+      const hit = el("rect", { x: x0, y: by - 2, width: x1 - x0, height: bh + 4, fill: "transparent" }, svg);
+      hit.addEventListener("mousemove", e => showTip(fig, e, `${r.label}<br>${b.name}：${opt.fmt(b.v)}${b.ci ? `（95% CI ${opt.fmt(b.ci[0])}–${opt.fmt(b.ci[1])}）` : ""}`));
+      hit.addEventListener("mouseleave", () => hideTip(fig));
+    });
+  });
+}
+
+function draw() {
+  document.querySelectorAll("svg.chart").forEach(s => s.innerHTML = "");
+  hbar("c-mm", DATA.mm.map(r => ({ label: r.label, bars: [
+      { name: "10 秒已实现价差", v: r.rs, color: "--s1" }, { name: "maker 手续费", v: r.fee, color: "--s2" }] })),
+    { domain: [-0.1, 0.4], ticks: [-0.1, 0, 0.1, 0.2, 0.3, 0.4], fmt: v => v.toFixed(2) + "¢", labelW: 150 });
+  hbar("c-rev", DATA.reversal.map(r => ({ label: r.label, bars: [
+      { name: "价格隐含", v: r.implied, color: "--s1" },
+      { name: `实际逆转（${r.k}/${r.n.toLocaleString()}）`, v: r.realized, color: "--s2", ci: [r.lo, r.hi] }] })),
+    { domain: [0, 0.09], ticks: [0, 0.02, 0.04, 0.06, 0.08], fmt: v => pct(v), labelW: 230 });
+  const L = DATA.leadlag;
+  hbar("c-ll", L.h.map((h, i) => ({ label: `${h} 分钟内`, bars: [
+      { name: "Polymarket 向 Kalshi 收敛", v: L.pm_follows[i], color: "--s1" },
+      { name: "Kalshi 向 Polymarket 收敛", v: L.kalshi_follows[i], color: "--s2" }] })),
+    { domain: [-0.1, 1.0], ticks: [0, 0.25, 0.5, 0.75, 1.0], fmt: v => v.toFixed(2), labelW: 90 });
+  lines();
+}
+
+function lines() {
+  const runs = DATA.shadow, svg = document.getElementById("c-sh"), fig = svg.closest(".figure");
+  const COLORS = ["--s1", "--s2", "--faint", "--muted"], DASH = ["", "", "5 4", "2 4"];
+  document.getElementById("sh-legend").innerHTML = runs.map((r, i) =>
+    `<span><i style="background:var(${COLORS[i]})"></i>${r.label}</span>`).join("");
+  const W = Math.max(300, Math.round(svg.parentElement.clientWidth - 36)), H = W < 560 ? 240 : 300;
+  const pl = 52, pr = W < 560 ? 52 : 92, pt = 10, pb = 30;
+  svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  const allY = runs.flatMap(r => r.net), maxH = Math.max(1, ...runs.map(r => r.hours[r.hours.length - 1] || 0));
+  let ylo = Math.min(0, ...allY), yhi = Math.max(1, ...allY); const pad = (yhi - ylo) * 0.08; ylo -= pad; yhi += pad;
+  const X = h => pl + h / maxH * (W - pl - pr), Y = v => pt + (yhi - v) / (yhi - ylo) * (H - pt - pb);
+  const step = niceStep((yhi - ylo) / 5);
+  for (let v = Math.ceil(ylo / step) * step; v <= yhi; v += step) {
+    el("line", { x1: pl, x2: W - pr, y1: Y(v), y2: Y(v), class: Math.abs(v) < 1e-9 ? "axis" : "grid" }, svg);
+    const t = el("text", { x: pl - 8, y: Y(v) + 4, "text-anchor": "end" }, svg); t.textContent = "$" + Math.round(v).toLocaleString(); }
+  const hs = niceStep(maxH / 6);
+  for (let h = 0; h <= maxH + 1e-9; h += hs) { const t = el("text", { x: X(h), y: H - 8, "text-anchor": "middle" }, svg); t.textContent = h.toFixed(h < 2 ? 1 : 0) + "h"; }
+  runs.forEach((r, i) => {
+    const d = r.hours.map((h, j) => `${j ? "L" : "M"}${X(h).toFixed(1)},${Y(r.net[j]).toFixed(1)}`).join("");
+    el("path", { d, fill: "none", stroke: css(COLORS[i]), "stroke-width": 2, "stroke-dasharray": DASH[i], "stroke-linejoin": "round" }, svg);
+    const lx = X(r.hours[r.hours.length - 1]), ly = Y(r.net[r.net.length - 1]);
+    el("circle", { cx: lx, cy: ly, r: 3.5, fill: css(COLORS[i]), stroke: css("--surface"), "stroke-width": 2 }, svg);
+    const t = el("text", { x: lx + 8, y: ly + 4, class: "lbl" }, svg); t.textContent = "$" + Math.round(r.net[r.net.length - 1]).toLocaleString();
+  });
+  const cross = el("line", { y1: pt, y2: H - pb, class: "axis", visibility: "hidden" }, svg);
+  const hit = el("rect", { x: pl, y: pt, width: W - pl - pr, height: H - pt - pb, fill: "transparent" }, svg);
+  hit.addEventListener("mousemove", e => {
+    const b = svg.getBoundingClientRect(), h = ((e.clientX - b.left) / b.width * W - pl) / (W - pl - pr) * maxH;
+    cross.setAttribute("x1", X(Math.max(0, h))); cross.setAttribute("x2", X(Math.max(0, h))); cross.setAttribute("visibility", "visible");
+    const rows = runs.map(r => { let j = r.hours.findIndex(x => x >= h); if (j < 0) j = r.hours.length - 1;
+      return `${r.label}：净 $${r.net[j].toFixed(0)}（奖励 $${r.reward[j].toFixed(0)}，库存 $${r.mtm[j].toFixed(0)}）`; });
+    showTip(fig, e, `${h.toFixed(1)} 小时<br>` + rows.join("<br>"));
+  });
+  hit.addEventListener("mouseleave", () => { cross.setAttribute("visibility", "hidden"); hideTip(fig); });
+
+  const SEL = { "v2 改善价格": "按类别分散 + 止损", "v2 加入最优价": "按类别分散 + 止损", "v1 改善价格": "按奖励/资金排序", "v1 加入最优价": "按奖励/资金排序" };
+  const money = v => `<span style="color:var(${v >= 0 ? "--good" : "--bad"})">${v >= 0 ? "+" : "−"}$${Math.abs(v).toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>`;
+  document.getElementById("sh-table").innerHTML = runs.map(r => { const f = r.final;
+    return `<tr><td>${r.label}</td><td>${SEL[r.label] || ""}</td><td class="n">${f.hours}h · ${f.markets} 个市场</td>
+      <td class="n">$${f.reward.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td><td class="n">${money(f.mtm)}</td>
+      <td class="n">${money(f.net)}</td><td class="n">$${f.capital.toLocaleString()}</td></tr>`; }).join("");
+}
+(function status() {
+  const st = document.getElementById("sh-status"); if (!st || !DATA.generated_at) return;
+  const done = DATA.shadow.every(r => r.final.hours >= 7.9);
+  st.textContent = (done ? "测试已完成" : "测试进行中") + "，数据截至 " + DATA.generated_at + "（UTC）。";
+})();
+function niceStep(x) { const p = Math.pow(10, Math.floor(Math.log10(x))); const m = x / p; return (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p; }
+
+draw();
+let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(draw, 120); });
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+</script>
