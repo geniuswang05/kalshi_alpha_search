@@ -1,4 +1,4 @@
-"""从研究数据生成项目报告页（report/kalshi_edge_atlas.html）。
+"""从研究数据生成项目报告页（report/kalshi_alpha_search.html）。
 
 图表数据全部来自 data_cache 下的分析产出；影子做市前向测试的曲线在测试进行中也可重建。
 用法: python scripts/build_report.py
@@ -16,7 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from config.settings import DATA_CACHE_DIR, PROJECT_ROOT
 
 LANG = "en" if "--lang=en" in sys.argv or "en" in sys.argv[1:] else "zh"
-OUT = PROJECT_ROOT / "report" / ("kalshi_edge_atlas_en.html" if LANG == "en" else "kalshi_edge_atlas.html")
+OUT = PROJECT_ROOT / "report" / ("kalshi_alpha_search_en.html" if LANG == "en" else "kalshi_alpha_search.html")
 OUT.parent.mkdir(exist_ok=True)
 T = {
     "zh": {"trade": "成交时刻 · 572 个市场", "YES": "随机时刻 · 落后方 YES", "NO": "随机时刻 · 领先方 NO",
